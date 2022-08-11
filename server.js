@@ -7,6 +7,13 @@ require('./redis/blocklist-access-token')
 require('./redis/allowlist-refresh-token')
 const jwt = require('jsonwebtoken')
 
+app.use((req, res, proximo) => {
+  res.set({
+    'Content-Type': 'application/json'
+  })
+  proximo()
+})
+
 const routes = require('./rotas')
 routes(app)
 app.use((erro, req, res, proximo) => {
