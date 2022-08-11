@@ -20,8 +20,8 @@ module.exports = {
   async lista (req, res) {
     try {
       let posts = await Post.listarTodos()
-      if(!req.estaAutenticado) {
-        posts = posts.map(post => ({titulo: post.titulo, conteudo: post.conteudo}))
+      if (!req.estaAutenticado) {
+        posts = posts.map(post => ({ titulo: post.titulo, conteudo: post.conteudo }))
       }
 
       res.json(posts)
