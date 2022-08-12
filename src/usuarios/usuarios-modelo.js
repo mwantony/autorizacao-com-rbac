@@ -3,7 +3,12 @@ const { InvalidArgumentError, NaoEncontrado } = require('../erros')
 const validacoes = require('../validacoes-comuns')
 const bcrypt = require('bcrypt')
 
+/* A classe Usuario é responsável por gerenciar todas as operações relacionadas a usuários */
 class Usuario {
+  /**
+  * O contrutor recebe os dados de um usuário e os atribui a instância atual
+  * @param {object} usuario
+  ***/
   constructor (usuario) {
     this.id = usuario.id
     this.nome = usuario.nome
@@ -13,6 +18,10 @@ class Usuario {
     this.cargo = usuario.cargo
     this.valida()
   }
+
+  /**
+   * @throws {InvalidArgumentError} - Esse erro ocorre quando um usuário com mesmo e-mail já está cadastrado
+   */
 
   async adiciona () {
     if (await usuariosDao.buscaPorEmail(this.email)) {
