@@ -1,7 +1,7 @@
 const Usuario = require('./usuarios-modelo')
-
+const { NaoEncontrado } = require('../erros')
 const tokens = require('./tokens')
-const { EmailVerificacao } = require('./emails')
+const { EmailVerificacao, EmailRedefinicaoSenha } = require('./emails')
 const { ConversorUsuario } = require('../conversores.js')
 
 function geraEndereco (rota, token) {
@@ -60,7 +60,9 @@ module.exports = {
       const usuarios = await Usuario.lista()
       const conversor = new ConversorUsuario(
         'json',
-        req.acesso.todos.permitido ? req.acesso.todos.atributos : req.acesso.apenasSeu.atributos
+        req.acesso.todos.permitido
+          ? req.acesso.todos.atributos
+          : req.acesso.apenasSeu.atributos
       )
       res.send(conversor.converter(usuarios))
     } catch (erro) {
@@ -85,6 +87,23 @@ module.exports = {
       res.status(200).json()
     } catch (erro) {
       proximo(erro)
+    }
+  },
+
+  async esqueciMinhaSenha (req, res, proximo) {
+    const respostaPadrao = { mensagem: 'Se encontrarmos um usuário com este email, vamos enviar uma mensagem com as instruções para redefinir a senha' }
+    try {
+      const email = req.body.email
+      const usuario = await Usuario.buscaPorEmail(email)
+      const emailRedefinir = new EmailRedefinicaoSenha(usuario)
+      await emailRedefinir.enviaEmail(respostaPadrao)
+      res.send()
+    } catch (error) {
+      if (error instanceof NaoEncontrado) {
+        res.send(respostaPadrao)
+        return
+      }
+      proximo(error)
     }
   }
 }
