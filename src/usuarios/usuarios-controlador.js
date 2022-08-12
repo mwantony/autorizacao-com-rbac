@@ -1,5 +1,5 @@
 const Usuario = require('./usuarios-modelo')
-const { NaoEncontrado } = require('../erros')
+const { NaoEncontrado, InvalidArgumentError } = require('../erros')
 const tokens = require('./tokens')
 const { EmailVerificacao, EmailRedefinicaoSenha } = require('./emails')
 const { ConversorUsuario } = require('../conversores.js')
@@ -104,6 +104,22 @@ module.exports = {
         res.send(respostaPadrao)
         return
       }
+      proximo(error)
+    }
+  },
+
+  async trocarSenha (req, res, proximo) {
+    try {
+      if (typeof req.body.token !== 'string' || req.body.token.lenght === 0) {
+        throw new InvalidArgumentError('O token está inválido')
+      }
+      const id = await tokens.redefinicaoDeSenha.verifica(req.body.token)
+
+      const usuario = await Usuario.buscaPorId(id)
+      await usuario.adicionaSenha(req.body.senha)
+      await usuario.atualizarSenha()
+      res.send({mensagem: 'Sua senha foi atualizada com sucesso'})
+    } catch (error) {
       proximo(error)
     }
   }
