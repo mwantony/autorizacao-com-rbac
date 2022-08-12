@@ -1,5 +1,5 @@
 require('dotenv').config()
-const {InvalidArgumentError, NaoEncontrado, NaoAutorizado} = require('./src/erros')
+const { InvalidArgumentError } = require('./src/erros')
 const app = require('./app')
 const port = 3000
 require('./database')
@@ -16,7 +16,7 @@ app.use((req, res, proximo) => {
 
 const routes = require('./rotas')
 routes(app)
-app.use((erro, req, res, proximo) => {
+app.use((erro, req, res) => {
   let status = 500
   const corpo = {
     mensagem: erro.message

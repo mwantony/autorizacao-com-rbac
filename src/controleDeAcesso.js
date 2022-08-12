@@ -1,9 +1,10 @@
-const AccesControl = require("accesscontrol");
-const controle = new AccesControl();
+const AccesControl = require('accesscontrol')
+const controle = new AccesControl()
 
 controle
-  .grant("assinante")
-  .readAny("post", ["id", "titulo", "conteudo", "autor"]);
+  .grant('assinante')
+  .readAny('post', ['id', 'titulo', 'conteudo', 'autor'])
+  .readAny('usuario', ['nome'])
 
 controle.grant('editor')
   .extend('assinante')
@@ -16,4 +17,4 @@ controle.grant('admin')
   .readAny('usuario')
   .deleteAny('usuario')
 
-module.exports = controle;
+module.exports = controle

@@ -1,31 +1,31 @@
-const controle = require("../controleDeAcesso");
+const controle = require('../controleDeAcesso')
 
 const metodos = {
   ler: {
-    todos: "readAny",
-    apenasSeu: "readOwn",
+    todos: 'readAny',
+    apenasSeu: 'readOwn'
   },
   criar: {
-    todos: "createAny",
-    apenasSeu: "createOwn",
+    todos: 'createAny',
+    apenasSeu: 'createOwn'
   },
   remover: {
-    todos: "deleteAny",
-    apenasSeu: "deleteOwn",
-  },
-};
+    todos: 'deleteAny',
+    apenasSeu: 'deleteOwn'
+  }
+}
 module.exports = (entidade, acao) => (req, res, proximo) => {
-  const permissoesDoCargo = controle.can(req.user.cargo);
-  const acoes = metodos[acao];
-  const permissaoTodos = permissoesDoCargo[acoes.todos](entidade);
-  const permissaoApenasSeu = permissoesDoCargo[acoes.apenasSeu](entidade);
+  const permissoesDoCargo = controle.can(req.user.cargo)
+  const acoes = metodos[acao]
+  const permissaoTodos = permissoesDoCargo[acoes.todos](entidade)
+  const permissaoApenasSeu = permissoesDoCargo[acoes.apenasSeu](entidade)
   if (
     permissaoTodos.granted === false &&
     permissaoApenasSeu.granted === false
   ) {
-    res.status(403);
-    res.end();
-    return;
+    res.status(403)
+    res.end()
+    return
   }
   req.acesso = {
     todos: {
@@ -36,6 +36,6 @@ module.exports = (entidade, acao) => (req, res, proximo) => {
       permitido: permissaoApenasSeu.granted,
       atributos: permissaoApenasSeu.attributes
     }
-  };
-  proximo();
-};
+  }
+  proximo()
+}
